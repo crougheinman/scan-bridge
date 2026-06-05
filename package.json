@@ -1,0 +1,21 @@
+{
+  "name": "magic-ops-scan-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local scan bridge agent: polls the admin for scan jobs, drives the store scanner over eSCL (or NAPS2), and uploads the resulting PDF back. Runs on the store PC next to the scanner.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "probe": "node index.js --probe",
+    "scan-once": "node index.js --once"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  },
+  "optionalDependencies": {
+    "bonjour-service": "^1.2.1"
+  }
+}
