@@ -6,7 +6,7 @@ title Scan Bridge
 where node >nul 2>nul
 if errorlevel 1 (
   echo.
-  echo [X] Node.js is not installed. Install it from https://nodejs.org (LTS version),
+  echo [X] Node.js is not installed. Install the LTS version from https://nodejs.org,
   echo     then run this file again.
   echo.
   pause

@@ -66,6 +66,22 @@ Generates a sample 2-page PDF instead of scanning. Use this to prove the whole
 pipeline (Scan button → job → upload → viewable PDF) before any hardware is wired
 in. Set `SCAN_MODE=mock` and press **Scan** in the admin.
 
+## Deep-sleep tolerance
+Some scanners (e.g. the Brother MFC-L2820DW) sleep aggressively: they still
+answer ping but stall on the first HTTP request, which can make a probe or the
+first scan of the day look like a failure. The bridge handles this by waking the
+scanner and retrying before giving up. Tunables (in `.env`, all optional):
+
+| Setting | Default | Meaning |
+|---|---|---|
+| `ESCL_PROBE_TIMEOUT_MS` | `10000` | Per-attempt timeout for the reachability probe. |
+| `ESCL_WAKE_RETRIES` | `3` | How many times to wake + retry the probe and job start. |
+| `ESCL_RETRY_DELAY_MS` | `2000` | Pause between retries. |
+
+If `probe-scanner.bat` ever reports `reachable=false` while the scanner is on and
+on the same network, wake it (tap the panel) and run it again — and consider
+raising the scanner's sleep timer on the device.
+
 ## Notes
 - One job at a time; the admin hands out jobs atomically, so two bridges can't
   grab the same one. A job that's claimed but never finished (bridge crash) is
