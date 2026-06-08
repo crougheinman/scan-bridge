@@ -50,12 +50,15 @@ async function produceScan(job) {
   const settings = job.settings || {};
   if (config.mode === 'mock') return mock.scan(job);
   if (config.mode === 'naps2') return naps2.scan(settings, config.scanTimeoutMs);
-  const pages = await escl.scan(currentIp, settings, config.scanTimeoutMs);
+  // The admin routes each job to a specific store scanner; use that IP when
+  // provided, falling back to the bridge's configured default.
+  const ip = job.scannerIp || currentIp;
+  const pages = await escl.scan(ip, settings, config.scanTimeoutMs);
   return assemblePdf(pages);
 }
 
 async function processJob(job) {
-  log.info(`Claimed job #${job.id} — settings ${JSON.stringify(job.settings)}`);
+  log.info(`Claimed job #${job.id} — scanner ${job.scannerIp || currentIp} — settings ${JSON.stringify(job.settings)}`);
   try {
     const { bytes, pageCount } = await produceScan(job);
     log.info(`Scan produced ${pageCount ?? '?'} page(s), ${bytes.length} bytes. Uploading…`);
