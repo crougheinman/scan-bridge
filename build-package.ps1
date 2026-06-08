@@ -16,7 +16,8 @@ $include = @(
     '.env.example',
     'README.md',
     'start-scan-bridge.bat',
-    'probe-scanner.bat'
+    'probe-scanner.bat',
+    'install-bridge-task.bat'
 )
 
 $staging = Join-Path $env:TEMP 'scan-bridge-pkg'
