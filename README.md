@@ -12,8 +12,9 @@ reach a scanner on a store's private LAN, so this bridge does the work:
 4. Sends a heartbeat (`POST /api/scan/heartbeat`) so the admin can show whether
    the bridge and scanner are online.
 
-All calls use outbound HTTPS and a shared secret (`X-Scan-Key`) — no inbound
-ports, nothing exposed to the internet, same model as the PrintNode bridge.
+All calls use outbound HTTPS and this store's own bridge key (`X-Scan-Key`) — the
+admin resolves the bridge and its store from the key. No inbound ports, nothing
+exposed to the internet, same model as the PrintNode bridge.
 
 ## Requirements
 - Node.js 18+ on the store PC.
@@ -27,12 +28,16 @@ npm install
 cp .env.example .env      # then edit .env
 ```
 
-Fill in `.env`:
+Get these values from the admin: **Stores → the store → Scan bridge → Generate
+bridge key** (it shows a ready-to-paste block), and register the store's scanners
+under **Scanners**.
 - `ADMIN_URL` — the admin base URL (VPS).
-- `SCAN_KEY` — must equal `scan.bridgeKey` in the admin's `.env`.
-- `BRIDGE_ID` / `BRIDGE_LABEL` — identify this PC.
+- `SCAN_KEY` — this store's bridge key (generated on the store's page; the admin
+  derives the bridge + store from it).
+- `BRIDGE_ID` / `BRIDGE_LABEL` — identify this PC (the admin suggests the value).
 - `SCAN_MODE` — `escl` (network), `naps2` (USB), or `mock` (no scanner, for testing).
-- `SCANNER_IP` — for eSCL (e.g. `192.168.0.204`).
+- `SCANNER_IP` — fallback eSCL IP only; each job is routed to a specific scanner
+  the admin picks, and that IP overrides this per job.
 
 ## Run
 ```bash
@@ -81,6 +86,19 @@ scanner and retrying before giving up. Tunables (in `.env`, all optional):
 If `probe-scanner.bat` ever reports `reachable=false` while the scanner is on and
 on the same network, wake it (tap the panel) and run it again — and consider
 raising the scanner's sleep timer on the device.
+
+## Building the download package
+The admin's install guide links a `.zip` that a store PC unzips to `C:\scan-bridge`.
+It bundles the source + `.bat` launchers (no `node_modules` — the launchers run
+`npm install` on first run) and excludes `.env`/`.git`.
+
+- **Windows:** `powershell -ExecutionPolicy Bypass -File build-package.ps1`
+  → writes `dist/scan-bridge.zip`.
+- **Linux / VPS:** `zip -r scan-bridge.zip index.js lib package.json package-lock.json .env.example README.md *.bat`
+  (run from inside `scan-bridge/`).
+
+Then copy the zip to `admin/public/downloads/scan-bridge.zip` (the guide's
+download button serves it from there; override with `scan.bridgeDownloadUrl`).
 
 ## Notes
 - One job at a time; the admin hands out jobs atomically, so two bridges can't
