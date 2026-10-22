@@ -94,7 +94,7 @@ It bundles the source + `.bat` launchers (no `node_modules` — the launchers ru
 
 - **Windows:** `powershell -ExecutionPolicy Bypass -File build-package.ps1`
   → writes `dist/scan-bridge.zip`.
-- **Linux / VPS:** `zip -r scan-bridge.zip index.js lib package.json package-lock.json .env.example README.md *.bat`
+- **Linux / VPS:** `zip -r scan-bridge.zip index.js lib package.json package-lock.json .env.example README.md *.bat *.vbs`
   (run from inside `scan-bridge/`).
 
 Then copy the zip to `admin/public/downloads/scan-bridge.zip` (the guide's

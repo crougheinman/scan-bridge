@@ -16,6 +16,7 @@ $include = @(
     '.env.example',
     'README.md',
     'start-scan-bridge.bat',
+    'start-scan-bridge-hidden.vbs',
     'probe-scanner.bat',
     'install-bridge-task.bat'
 )
